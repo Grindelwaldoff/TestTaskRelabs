@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Relabs</title>
+        <style>
+            form {
+                margin: 20px;
+            }
+            button:checked{
+                background-color: green;
+            }
+        </style>
+    </head>
+    <body>
+        <form action='post' onsubmit='sendMessage(event)'>
+            <input type='text' id="message"/>
+            <button type='submit'>Send</button>
+        </form>
+        <l id='messages'>
+        </l>
+        <script>
+            var websocket = new WebSocket('ws://localhost:8000/ws');
+            websocket.onmessage = function(event){
+                var messages = document.getElementById('messages')
+                var message = document.createElement('li')
+                var content = document.createTextNode(JSON.parse(event.data))
+                message.appendChild(content)
+                messages.appendChild(message)
+            };
+            function sendMessage(event) {
+                var input = document.getElementById('message')
+                websocket.send(input.value)
+                input.value = ''
+                event.preventDefault()
+            }
+        </script>
+    </body>
+</html>
